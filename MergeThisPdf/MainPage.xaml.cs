@@ -45,18 +45,36 @@ namespace MergeThisPdf
 
         private async void OnMergeClicked(object sender, EventArgs e)
         {
-            if (pdfFiles.Count == 0)
+            if (pdfFiles.Count < 2)
             {
-                await DisplayAlert("Error", "No PDF Filest selected.", "Ok");
+                await DisplayAlert("Error", "Not enough PDF Filest selected (at least 2).", "Ok");
+                return;
             }
 
-            PdfDocument mergedDocument = new PdfDocument();
-
-            foreach (var file in pdfFiles)
+            try
             {
-                PdfDocument inputDocument = PdfReader.Open(file, PdfDocumentOpenMode.Import);
+                PdfDocument mergedDocument = new PdfDocument();
 
+                foreach (var file in pdfFiles)
+                {
+                    PdfDocument inputDocument = PdfReader.Open(file, PdfDocumentOpenMode.Import);
+                    for (int i = 0; i < inputDocument.PageCount; i++)
+                    {
+                        PdfPage page = inputDocument.Pages[i];
+                        mergedDocument.Pages.Add(page);
+                    }
+
+                }
+
+
+                //zwrocic plik i zapisac
             }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", "Something went wrong :(", "Ok");
+                return;
+            }
+
         }
 
     }
