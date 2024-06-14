@@ -1,15 +1,20 @@
-﻿using PdfSharp.Pdf;
+﻿using CommunityToolkit.Maui.Storage;
+using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System.Collections.ObjectModel;
+
 namespace MergeThisPdf
 {
     public partial class MainPage : ContentPage
     {
         private ObservableCollection<string> pdfFiles;
+        public readonly IFileSaver fileSaver;
 
-        public MainPage()
+        public MainPage(IFileSaver fileSaver)
         {
             InitializeComponent();
+
+            this.fileSaver = fileSaver;
             pdfFiles = new ObservableCollection<string>();
             pdfFilesListView.ItemsSource = pdfFiles;
         }
@@ -35,7 +40,6 @@ namespace MergeThisPdf
                     pdfFiles.Add(file.FullPath);
                 }
             }
-
         }
 
         private void OnClearClicked(object sender, EventArgs e)
@@ -47,7 +51,7 @@ namespace MergeThisPdf
         {
             if (pdfFiles.Count < 2)
             {
-                await DisplayAlert("Error", "Not enough PDF Filest selected (at least 2).", "Ok");
+                await DisplayAlert("Error", "Not enough PDF Files selected (at least 2).", "Ok");
                 return;
             }
 
@@ -63,20 +67,30 @@ namespace MergeThisPdf
                         PdfPage page = inputDocument.Pages[i];
                         mergedDocument.Pages.Add(page);
                     }
-
                 }
 
+                using var stream = new MemoryStream();
+                mergedDocument.Save(stream);
 
-                //zwrocic plik i zapisac
+                stream.Position = 0;
+
+                var result = await fileSaver.SaveAsync("MergedDocuments.pdf", stream);
+
+                if (result.IsSuccessful)
+                {
+                    pdfFiles.Clear();
+                    await DisplayAlert("Success", "The PDF has been saved successfully.", "Ok");
+                }
+                else
+                {
+                    await DisplayAlert("Error", "Failed to save the PDF file.", "Ok");
+                }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", "Something went wrong :(", "Ok");
-                return;
+                await DisplayAlert("Error", $"Something went wrong: {ex.Message}", "Ok");
+                System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
             }
-
         }
-
     }
-
 }
