@@ -17,8 +17,6 @@ namespace MergeThisPdf
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-
-            // Register IFileSaver and MainPage
             builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
             builder.Services.AddTransient<MainPage>();
 
