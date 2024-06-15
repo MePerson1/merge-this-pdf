@@ -3,24 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MergeThisPdf.MainPage">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Button Text="Add" Clicked="OnAddClicked" />
-                <Button Text="Clear" Clicked="OnClearClicked" />
-            </HorizontalStackLayout>
-            <ListView x:Name="pdfFilesListView" HeightRequest="200">
+
+        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="0"  >
+            <Button Margin="5" Background="GreenYellow" Text="Add" Clicked="OnAddClicked" />
+            <Button Margin="5" Background="OrangeRed" Text="Clear" Clicked="OnClearClicked" />
+        </VerticalStackLayout>
+        <Frame Margin="10" Grid.Row="0" Grid.Column="1" BorderColor="Black" CornerRadius="5" Padding="0" HorizontalOptions="FillAndExpand">
+            <ListView x:Name="pdfFilesListView" HeightRequest="200" HorizontalOptions="FillAndExpand">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding}" />
+                        <ViewCell>
+                            <Frame BackgroundColor="BlueViolet" Padding="10" Margin="5" BorderColor="Gray" CornerRadius="5">
+                                <Label Text="{Binding}" />
+                            </Frame>
+                        </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button Text="Merge" Clicked="OnMergeClicked" HorizontalOptions="Center" />
-        </VerticalStackLayout>
-    </ScrollView>
-
+        </Frame>
+        <Button Grid.Row="2" Grid.ColumnSpan="2" Text="Merge" Clicked="OnMergeClicked" HorizontalOptions="Center" VerticalOptions="Center" />
+    </Grid>
 </ContentPage>
