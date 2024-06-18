@@ -57,17 +57,7 @@ namespace MergeThisPdf
 
             try
             {
-                PdfDocument mergedDocument = new PdfDocument();
-
-                foreach (var file in pdfFiles)
-                {
-                    PdfDocument inputDocument = PdfReader.Open(file, PdfDocumentOpenMode.Import);
-                    for (int i = 0; i < inputDocument.PageCount; i++)
-                    {
-                        PdfPage page = inputDocument.Pages[i];
-                        mergedDocument.Pages.Add(page);
-                    }
-                }
+                PdfDocument mergedDocument = MergeDocuments(pdfFiles);
 
                 using var stream = new MemoryStream();
                 mergedDocument.Save(stream);
@@ -91,6 +81,23 @@ namespace MergeThisPdf
                 await DisplayAlert("Error", $"Something went wrong: {ex.Message}", "Ok");
                 System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
             }
+        }
+
+        private PdfDocument MergeDocuments(ObservableCollection<string> pdfFiles)
+        {
+            PdfDocument mergedDocument = new PdfDocument();
+
+            foreach (var file in pdfFiles)
+            {
+                PdfDocument inputDocument = PdfReader.Open(file, PdfDocumentOpenMode.Import);
+                for (int i = 0; i < inputDocument.PageCount; i++)
+                {
+                    PdfPage page = inputDocument.Pages[i];
+                    mergedDocument.Pages.Add(page);
+                }
+            }
+
+            return mergedDocument;
         }
     }
 }
