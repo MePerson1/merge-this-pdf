@@ -23,9 +23,16 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Frame BackgroundColor="BlueViolet" Padding="10" Margin="5" BorderColor="Gray" CornerRadius="5">
-                                <Label Text="{Binding}" />
-                            </Frame>
+                            <Grid Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Frame BackgroundColor="BlueViolet" Padding="10" BorderColor="Gray" CornerRadius="5" HorizontalOptions="FillAndExpand">
+                                   <Label Text="{Binding}" VerticalOptions="Center" />
+                                </Frame>
+                                <Button BackgroundColor="Red" TextColor="White" Text="X" Clicked="OnDeleteClicked" CommandParameter="{Binding}" WidthRequest="30" HeightRequest="30" HorizontalOptions="End" VerticalOptions="Center" Grid.Column="1"/>
+                            </Grid>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>

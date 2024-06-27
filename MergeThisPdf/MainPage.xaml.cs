@@ -47,6 +47,17 @@ namespace MergeThisPdf
             pdfFiles.Clear();
         }
 
+        private void OnDeleteClicked(object sender, EventArgs e)
+        {
+            var button = sender as Button;
+            var filePath = button?.CommandParameter as string;
+
+            if (filePath != null && pdfFiles.Contains(filePath))
+            {
+                pdfFiles.Remove(filePath);
+            }
+        }
+
         private async void OnMergeClicked(object sender, EventArgs e)
         {
             if (pdfFiles.Count < 2)
