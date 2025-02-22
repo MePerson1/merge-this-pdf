@@ -29,7 +29,7 @@ namespace MergeThisPdf
 
             if (result is null)
             {
-                await DisplayAlert("Error", "Wrong file picked.", "Ok");
+                await DisplayAlert("Error", "No file selected.", "Ok");
                 return;
             }
 
@@ -37,10 +37,20 @@ namespace MergeThisPdf
             {
                 if (file.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase) && !pdfFiles.Contains(file.FullPath))
                 {
-                    pdfFiles.Add(file.FullPath);
+                    try
+                    {
+                        // Test if PdfSharp can open the file
+                        using var testDoc = PdfReader.Open(file.FullPath, PdfDocumentOpenMode.Import);
+                        pdfFiles.Add(file.FullPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        await DisplayAlert("Error", $"Unable to add file '{file.FileName}': {ex.Message}", "Ok");
+                    }
                 }
             }
         }
+
 
         private void OnClearClicked(object sender, EventArgs e)
         {
@@ -100,15 +110,24 @@ namespace MergeThisPdf
 
             foreach (var file in pdfFiles)
             {
-                PdfDocument inputDocument = PdfReader.Open(file, PdfDocumentOpenMode.Import);
-                for (int i = 0; i < inputDocument.PageCount; i++)
+                try
                 {
-                    PdfPage page = inputDocument.Pages[i];
-                    mergedDocument.Pages.Add(page);
+                    PdfDocument inputDocument = PdfReader.Open(file, PdfDocumentOpenMode.Import);
+                    for (int i = 0; i < inputDocument.PageCount; i++)
+                    {
+                        PdfPage page = inputDocument.Pages[i];
+                        mergedDocument.Pages.Add(page);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error with file {file}: {ex.Message}");
+                    throw new Exception($"Error merging file '{file}': {ex.Message}", ex);
                 }
             }
 
             return mergedDocument;
         }
+
     }
 }
